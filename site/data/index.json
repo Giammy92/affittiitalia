@@ -1,0 +1,169 @@
+{
+ "semestre": "2025-S2",
+ "boundaries": "2018-S2",
+ "breaks": [
+  8,
+  10,
+  12,
+  15,
+  20,
+  25
+ ],
+ "cities": [
+  {
+   "name": "Milano",
+   "istat": "015146",
+   "bbox": [
+    9.04058,
+    45.38678,
+    9.27796,
+    45.536
+   ],
+   "zones": 41,
+   "unmapped": [
+    {
+     "zona": "D37",
+     "linkzona": "MI00011747",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "FORLANINI, MECENATE, PONTE LAMBRO",
+     "semestre": "2025-S2",
+     "loc_min": 12.0,
+     "loc_max": 14.9,
+     "loc_mid": 13.45,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE",
+     "ott_min": 15.0,
+     "ott_max": 19.0
+    },
+    {
+     "zona": "D38",
+     "linkzona": "MI00011748",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "SANTA GIULIA, ROGOREDO",
+     "semestre": "2025-S2",
+     "loc_min": 11.0,
+     "loc_max": 14.0,
+     "loc_mid": 12.5,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE",
+     "ott_min": 14.1,
+     "ott_max": 18.5
+    },
+    {
+     "zona": "D39",
+     "linkzona": "MI00011750",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "CASCINA MERLATA, EXPO",
+     "semestre": "2025-S2",
+     "loc_min": 14.0,
+     "loc_max": 21.0,
+     "loc_mid": 17.5,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "OTTIMO",
+     "ott_min": 14.0,
+     "ott_max": 21.0
+    },
+    {
+     "zona": "D40",
+     "linkzona": "MI00011751",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "MUSOCCO, CERTOSA",
+     "semestre": "2025-S2",
+     "loc_min": 10.0,
+     "loc_max": 14.5,
+     "loc_mid": 12.25,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE",
+     "ott_min": 14.6,
+     "ott_max": 21.5
+    }
+   ],
+   "redefined": [
+    "D30",
+    "D15"
+   ]
+  },
+  {
+   "name": "Roma",
+   "istat": "058091",
+   "bbox": [
+    12.12339,
+    41.65557,
+    12.8555,
+    42.14092
+   ],
+   "zones": 234,
+   "unmapped": [
+    {
+     "zona": "E186",
+     "linkzona": "RM00011084",
+     "fascia": "E",
+     "fascia_label": "Suburbana",
+     "descr": "OSTIA LEVANTE",
+     "semestre": "2025-S2",
+     "loc_min": 9.8,
+     "loc_max": 13.3,
+     "loc_mid": 11.55,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    },
+    {
+     "zona": "E187",
+     "linkzona": "RM00011085",
+     "fascia": "E",
+     "fascia_label": "Suburbana",
+     "descr": "OSTIA PONENTE",
+     "semestre": "2025-S2",
+     "loc_min": 9.0,
+     "loc_max": 12.0,
+     "loc_mid": 10.5,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    },
+    {
+     "zona": "E188",
+     "linkzona": "RM00012384",
+     "fascia": "E",
+     "fascia_label": "Suburbana",
+     "descr": "VALLERANO ( VIA DI VALLERANO) - PAPILLO ( VIA ALBERTO MORAVIA)",
+     "semestre": "2025-S2",
+     "loc_min": 11.3,
+     "loc_max": 15.0,
+     "loc_mid": 13.15,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    }
+   ],
+   "redefined": [
+    "R42",
+    "D70",
+    "E66",
+    "E34"
+   ]
+  },
+  {
+   "name": "Bologna",
+   "istat": "037006",
+   "bbox": [
+    11.22962,
+    44.42115,
+    11.43368,
+    44.55621
+   ],
+   "zones": 34,
+   "unmapped": [],
+   "redefined": []
+  }
+ ]
+}
