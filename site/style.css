@@ -37,8 +37,11 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   border: 0; background: var(--ink); color: #fff; padding: 0 14px;
   border-radius: 0 10px 10px 0; cursor: pointer;
 }
-.ghost {
-  margin-left: auto; width: 36px; height: 36px; border-radius: 50%;
+.pill {
+  margin-left: auto; border: 1px solid var(--line); background: #fff; border-radius: 999px;
+  padding: 8px 14px; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; white-space: nowrap;
+}
+.ghost { width: 36px; height: 36px; border-radius: 50%;
   border: 1px solid var(--line); background: #fff; font-weight: 700; color: var(--ink-2); cursor: pointer;
 }
 
@@ -83,6 +86,10 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .big { font-size: 30px; font-weight: 750; letter-spacing: -.02em; margin: 14px 0 0; }
 .big small { font-size: 14px; font-weight: 500; color: var(--muted); }
 .sub { color: var(--ink-2); margin: 2px 0 0; font-size: 14px; }
+.trend { display: inline-block; margin: 8px 0 0; font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.trend.up { color: #9b2c2c; background: #fff5f5; }
+.trend.down { color: #22543d; background: #f0fff4; }
+.trend.flat { color: var(--ink-2); background: #edf2f7; }
 .estimate { margin-top: 14px; padding: 12px; border-radius: 12px; background: #fff7f2; border: 1px solid #fde3d4; }
 .estimate .lbl { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .estimate input { width: 64px; font: inherit; font-size: 14px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 8px; }
@@ -113,12 +120,27 @@ dialog a { color: var(--accent); }
 
 .zone-tip { font-size: 12.5px; }
 
+.zlist { list-style: none; margin: 12px 0 0; padding: 0; }
+.zrow button {
+  display: grid; grid-template-columns: 12px 1fr auto; gap: 10px; align-items: center; width: 100%;
+  border: 0; border-top: 1px solid var(--line); background: none; padding: 9px 2px; text-align: left;
+  font: inherit; font-size: 13.5px; color: var(--ink); cursor: pointer;
+}
+.zrow button:hover { background: #f7fafc; }
+.zrow i { width: 12px; height: 12px; border-radius: 3px; }
+.zname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zval { text-align: right; font-weight: 600; white-space: nowrap; }
+.zval small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.zrow.out { opacity: .4; }
+
 /* Phone: budget collapses under the bar, panel becomes a bottom sheet */
 @media (max-width: 767px) {
   .bar { flex-wrap: wrap; gap: 8px; padding: 8px 16px; }
   .brand { font-size: 16px; }
-  #search { order: 3; flex-basis: 100%; max-width: none; }
-  .ghost { width: 32px; height: 32px; }
+  #search { order: 3; flex: 1 1 calc(100% - 44px); max-width: none; }
+  #infoBtn { order: 4; }
+  .ghost { width: 32px; height: 32px; margin-left: 0; }
+  .pill { padding: 6px 10px; font-size: 13px; }
   .budget { top: auto; left: 16px; right: 16px; width: auto; bottom: 16px; padding: 10px 12px; }
   .budget .hint#budgetMsg:empty { display: none; }
   /* Compact horizontal legend strip under the bar */

@@ -4,13 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AffittiItalia — Quanto costa l'affitto, zona per zona</title>
-<meta name="description" content="Mappa degli affitti per zona a Milano, Roma e Bologna con i valori ufficiali OMI dell'Agenzia delle Entrate. Cerca un indirizzo e scopri il canone medio al m².">
+<meta name="description" content="Mappa degli affitti per zona in 15 città italiane con i valori ufficiali OMI dell'Agenzia delle Entrate. Cerca un indirizzo e scopri il canone medio al m².">
 <meta property="og:title" content="AffittiItalia — Quanto costa l'affitto, zona per zona">
 <meta property="og:description" content="Valori ufficiali OMI (Agenzia delle Entrate) su mappa: cerca un indirizzo, imposta il tuo budget, scopri dove puoi vivere.">
+<meta property="og:image" content="https://giammy92.github.io/affittiitalia/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://giammy92.github.io/affittiitalia/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14213d">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2314213d'/><path d='M8 17 16 9l8 8v7h-5v-5h-6v5H8z' fill='%23fc8d59'/></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <header class="bar">
@@ -25,6 +32,7 @@
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-4.2-4.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
     </button>
   </form>
+  <button id="listBtn" class="pill" aria-label="Elenco delle zone">Elenco zone</button>
   <button id="infoBtn" class="ghost" aria-label="Informazioni">?</button>
 </header>
 
@@ -59,14 +67,14 @@
   <ul>
     <li>Sono <b>valori di riferimento</b>, non annunci: nelle zone più richieste i canoni di mercato attuali possono essere più alti del 15–30%.</li>
     <li>La superficie OMI è di norma <b>lorda (commerciale)</b>: include muri e quota parti comuni.</li>
-    <li>I confini delle zone sono quelli del 2° semestre 2018; i valori sono aggiornati all'ultimo semestre pubblicato. Le poche zone ridefinite dopo il 2018 sono segnalate.</li>
+    <li>I valori sono aggiornati all'ultimo semestre pubblicato. I confini delle zone sono quelli più recenti disponibili come dati aperti: 2024 per Milano (Comune di Milano), 2018 per le altre città. Le poche zone ridefinite nel frattempo sono segnalate.</li>
   </ul>
-  <p class="src">Fonte dati: <b>Agenzia Entrate – OMI</b>. Confini zone: Agenzia Entrate – OMI via <a href="https://github.com/ondata/quotazioni-immobiliari-agenzia-entrate" target="_blank" rel="noopener">onData</a>. Mappa © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Progetto indipendente, non affiliato all'Agenzia delle Entrate.</p>
+  <p class="src">Fonte dati: <b>Agenzia Entrate – OMI</b>. Confini zone: Agenzia Entrate – OMI, via <a href="https://dati.comune.milano.it/" target="_blank" rel="noopener">Comune di Milano</a> (CC BY 4.0) e <a href="https://github.com/ondata/quotazioni-immobiliari-agenzia-entrate" target="_blank" rel="noopener">onData</a>. Mappa © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Progetto indipendente, non affiliato all'Agenzia delle Entrate.</p>
   <p><a href="privacy.html">Privacy</a></p>
   <form method="dialog"><button class="primary">Ho capito</button></form>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@ const PHOTON_URL = 'https://photon.komoot.io/api/';
 const $ = (s) => document.querySelector(s);
 const state = { index: null, city: null, layer: null, marker: null, selected: null, cache: new Map() };
 
-const eur = (n, d = 0) => n.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = (n, d = 0) => n.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: 'always' });
 const eurM2 = (n) => eur(n, n % 1 ? 2 : 0);
 const round10 = (n) => Math.round(n / 10) * 10;
 const slug = (s) => s.toLowerCase().normalize('NFD').replace(/[^\w]/g, '');
@@ -157,13 +157,16 @@ function zoneHtml(p) {
   if (p.loc_min == null) {
     const why = p.nonres
       ? "Zona non residenziale (ad es. parchi, ospedali, aree agricole o servizi): l'OMI non pubblica canoni di locazione per le abitazioni."
-      : 'Dati di locazione non disponibili per questa zona.';
+      : p.sale_min
+        ? `Per questa zona l'OMI pubblica solo i prezzi di vendita: ${eur(p.sale_min)}–${eur(p.sale_max)} €/m² (abitazioni civili, stato normale). Nessun valore di locazione.`
+        : 'Dati di locazione non disponibili per questa zona.';
     return `${head}${title}<p class="warn">${why}</p>${meta(p)}`;
   }
   const lorda = p.sup !== 'N';
   return `${head}${title}
     <p class="big">${eurM2(p.loc_min)}–${eurM2(p.loc_max)} € <small>/m² al mese</small></p>
     <p class="sub">Abitazioni ${p.tipologia === 'Abitazioni di tipo economico' ? 'di tipo economico' : 'civili'}, stato normale${p.ott_max ? ` · stato ottimo fino a ${eurM2(p.ott_max)} €/m²` : ''}</p>
+    ${trendHtml(p)}
     <div class="estimate">
       <div class="lbl">Stima per <input id="psqm" type="number" min="15" max="400" step="5" value="${sqm()}" aria-label="Superficie"> m² ${lorda ? 'lordi (commerciali)' : 'netti'}</div>
       <div class="val" id="pest"></div>
@@ -173,8 +176,17 @@ function zoneHtml(p) {
     ${meta(p)}`;
 }
 
+function trendHtml(p) {
+  if (p.trend == null) return '';
+  const up = p.trend > 0.5, down = p.trend < -0.5;
+  const cls = up ? 'up' : down ? 'down' : 'flat';
+  const arrow = up ? '▲' : down ? '▼' : '=';
+  const sign = p.trend > 0 ? '+' : '';
+  return `<p class="trend ${cls}">${arrow} ${sign}${eur(p.trend, 1)}% rispetto al ${escapeHtml(p.trend_from.replace(/(\d{4})-S(\d)/, '$2° semestre $1'))}</p>`;
+}
+
 function meta(p) {
-  return `<p class="meta">Fonte: Agenzia Entrate – OMI, ${escapeHtml(state.index.semestre.replace('-S', ', semestre '))}. Confini zona: ${escapeHtml(state.index.boundaries.replace('-S', ', sem. '))}.</p>`;
+  return `<p class="meta">Fonte: Agenzia Entrate – OMI, ${escapeHtml(state.index.semestre.replace('-S', ', semestre '))}. Confini zona: ${escapeHtml(state.city.boundaries.replace('-S', ', sem. '))}.</p>`;
 }
 
 function updateEstimate(p) {
@@ -204,6 +216,32 @@ function selectFeature(f, { zoom = false, source = 'click' } = {}) {
     state.layer.eachLayer((l) => { if (l.feature === f) focusBounds(l.getBounds()); });
   }
   track(source === 'search' ? 'zone_from_search' : 'zone_click');
+}
+
+// ---------- Zone list (sorted by rent; respects the budget filter) ----------
+function openList() {
+  const feats = state.cache.get(state.city.istat).features.filter((f) => f.properties.loc_mid != null);
+  feats.sort((a, b) => a.properties.loc_mid - b.properties.loc_mid);
+  const m2 = sqm();
+  const budget = parseFloat($('#budget').value);
+  const rows = feats.map((f, i) => {
+    const p = f.properties;
+    const fit = inBudget(p);
+    return `<li class="zrow${fit === false ? ' out' : ''}"><button data-i="${i}">
+      <i style="background:${colorFor(p.loc_mid)}"></i>
+      <span class="zname"><b>${escapeHtml(p.zona)}</b> ${escapeHtml(titleCase(p.descr || ''))}</span>
+      <span class="zval">${eurM2(p.loc_min)}–${eurM2(p.loc_max)} €/m²<small>${eur(round10(p.loc_min * m2))}–${eur(round10(p.loc_max * m2))} €/mese</small></span>
+    </button></li>`;
+  }).join('');
+  state.selected = null;
+  restyle();
+  openPanel(`<h2>Zone di ${escapeHtml(state.city.name)}</h2>
+    <p class="sub">Dalla più economica alla più cara · stima per ${m2} m²${budget ? ` · in grigio le zone oltre ${eur(budget)} €/mese` : ''}</p>
+    <ul class="zlist">${rows}</ul>`);
+  $('#panelBody').querySelectorAll('.zlist button').forEach((b) => {
+    b.onclick = () => selectFeature(feats[+b.dataset.i], { zoom: true, source: 'list' });
+  });
+  track('list_open');
 }
 
 // ---------- Data ----------
@@ -305,6 +343,7 @@ function toast(msg) {
 $('#closePanel').onclick = closePanel;
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#panel').hidden) closePanel(); });
 $('#infoBtn').onclick = () => $('#info').showModal();
+$('#listBtn').onclick = openList;
 $('#city').onchange = () => loadCity(state.index.cities.find((c) => c.istat === $('#city').value));
 let budgetTracked = false;
 $('#budget').oninput = () => { restyle(); if (!budgetTracked) { budgetTracked = true; track('budget_used'); } };

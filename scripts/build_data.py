@@ -1,7 +1,8 @@
 """Build the site's map data from OMI zone boundaries + current OMI values.
 
 Inputs
-  raw/kmz/<KML_NAME>-2018-2.kml   zone boundaries (OMI 2nd semester 2018, via onData)
+  raw/kmz/<KML_NAME>-2018-2.kml   zone boundaries (OMI 2nd semester 2018, via onData), or
+  raw/geo/*.geojson               newer open-data boundaries where a comune publishes them
   raw/values_<sem>.json           current values (scripts/fetch_values.py)
 Outputs
   site/data/<istat>.geojson       one per city, simplified, values joined
@@ -11,7 +12,8 @@ Zones are joined on the OMI zone code (e.g. "C16"): the 2018 KML carries no Link
 Codes present only in the KML were redefined after 2018 (no current values); codes
 present only in the values were created after 2018 (no boundary). Both are reported.
 
-Usage: python scripts/build_data.py [semester]   (default: 20252)
+Usage: python scripts/build_data.py [semester] [compare_semester]
+  default: 20252, compared against 20232 when raw/values_20232.json exists
 """
 import json
 import re
@@ -53,6 +55,23 @@ def parse_kml(path):
     return {"type": "FeatureCollection", "features": features}
 
 
+def load_geojson(path, zone_prop):
+    """Open-data boundaries (e.g. Comune di Milano), keyed by zone code; drops Z values."""
+    src = json.loads(path.read_text(encoding="utf-8"))
+    def flat(c):
+        return [round(c[0], 6), round(c[1], 6)] if isinstance(c[0], (int, float)) else [flat(x) for x in c]
+    return {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"zona": f["properties"][zone_prop].strip()},
+         "geometry": {"type": f["geometry"]["type"], "coordinates": flat(f["geometry"]["coordinates"])}}
+        for f in src["features"]]}
+
+
+def load_boundaries(c):
+    if c.get("geojson"):
+        return load_geojson(ROOT / c["geojson"], c.get("geojson_zone_prop", "Zona")), c["boundaries"]
+    return parse_kml(ROOT / "raw" / "kmz" / f"{c['kml_name']}-2018-2.kml"), "2018-S2"
+
+
 def simplify(fc):
     """Topology-preserving simplification via mapshaper (no slivers between zones)."""
     with tempfile.TemporaryDirectory() as tmp:
@@ -89,6 +108,12 @@ def zone_props(z, sem):
     }
     if not z["rows"]:
         p["nonres"] = True  # no residential quotation at all: parks, hospitals, airports...
+    else:
+        # Some zones (e.g. Venezia's islands) only have sale prices: keep them as context
+        sale = next((r for r in z["rows"] if r["tipologia"] == "Abitazioni civili"
+                     and r["stato"].upper() == "NORMALE" and r["compr_min"]), None)
+        if sale:
+            p.update(sale_min=sale["compr_min"], sale_max=sale["compr_max"])
     if row:
         p.update(loc_min=row["loc_min"], loc_max=row["loc_max"],
                  loc_mid=round((row["loc_min"] + row["loc_max"]) / 2, 2),
@@ -101,6 +126,14 @@ def zone_props(z, sem):
 # Fixed class breaks in €/m² per month, shared by every city so colours mean the same
 # everywhere. Wider steps at the top keep Milano's centre (20-40 €/m²) readable.
 BREAKS = [8, 10, 12, 15, 20, 25]
+
+
+def add_trend(p, past, cmp_label):
+    """% change of the zone midpoint vs. the comparison semester (same zone, same tipologia)."""
+    prev = past.get(p.get("linkzona"))
+    if prev and p.get("loc_mid") and prev[1] == p.get("tipologia"):
+        p["trend"] = round((p["loc_mid"] / prev[0] - 1) * 100, 1)
+        p["trend_from"] = cmp_label
 
 
 def bbox(fc):
@@ -118,31 +151,46 @@ def bbox(fc):
 
 def main():
     sem = sys.argv[1] if len(sys.argv) > 1 else "20252"
+    cmp_sem = sys.argv[2] if len(sys.argv) > 2 else "20232"
     sem_label = f"{sem[:4]}-S{sem[4]}"
     values = json.loads((ROOT / "raw" / f"values_{sem}.json").read_text(encoding="utf-8"))
+    cmp_path = ROOT / "raw" / f"values_{cmp_sem}.json"
+    # Earlier semester, keyed by LinkZona, for the per-zone trend
+    past = {}
+    if cmp_path.exists():
+        for zones in json.loads(cmp_path.read_text(encoding="utf-8")).values():
+            for z in zones:
+                row = pick_row(z["rows"])
+                if row:
+                    past[z["linkzona"]] = ((row["loc_min"] + row["loc_max"]) / 2, row["tipologia"])
+    cmp_label = f"{cmp_sem[:4]}-S{cmp_sem[4]}" if past else None
     OUT.mkdir(parents=True, exist_ok=True)
-    index = {"semestre": sem_label, "boundaries": "2018-S2", "breaks": BREAKS, "cities": []}
+    index = {"semestre": sem_label, "trend_from": cmp_label, "breaks": BREAKS, "cities": []}
 
     for c in CITIES:
-        fc = simplify(parse_kml(ROOT / "raw" / "kmz" / f"{c['kml_name']}-2018-2.kml"))
+        raw_fc, boundaries = load_boundaries(c)
+        fc = simplify(raw_fc)
         by_code = {z["codzona"]: z for z in values[c["istat"]]}
         mapped = set()
         for f in fc["features"]:
             code = f["properties"]["zona"]
             if code in by_code:
                 f["properties"] = zone_props(by_code[code], sem_label)
+                add_trend(f["properties"], past, cmp_label)
                 mapped.add(code)
             else:
                 f["properties"] = {"zona": code, "fascia": code[0],
                                    "fascia_label": FASCIA.get(code[0], ""), "redefined": True,
                                    "loc_min": None, "loc_max": None, "loc_mid": None}
         unmapped = [zone_props(z, sem_label) for code, z in by_code.items() if code not in mapped]
+        for u in unmapped:
+            add_trend(u, past, cmp_label)
         redefined = [f["properties"]["zona"] for f in fc["features"] if f["properties"].get("redefined")]
         (OUT / f"{c['istat']}.geojson").write_text(
             json.dumps(fc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         b = bbox(fc)
         index["cities"].append({
-            "name": c["name"], "istat": c["istat"], "bbox": [round(x, 5) for x in b],
+            "name": c["name"], "istat": c["istat"], "bbox": [round(x, 5) for x in b], "boundaries": boundaries,
             "zones": len(fc["features"]), "unmapped": unmapped, "redefined": redefined,
         })
         size = (OUT / f"{c['istat']}.geojson").stat().st_size

@@ -1,6 +1,6 @@
 {
  "semestre": "2025-S2",
- "boundaries": "2018-S2",
+ "trend_from": null,
  "breaks": [
   8,
   10,
@@ -14,82 +14,15 @@
    "name": "Milano",
    "istat": "015146",
    "bbox": [
-    9.04058,
-    45.38678,
-    9.27796,
-    45.536
+    9.04061,
+    45.38673,
+    9.27799,
+    45.53594
    ],
-   "zones": 41,
-   "unmapped": [
-    {
-     "zona": "D37",
-     "linkzona": "MI00011747",
-     "fascia": "D",
-     "fascia_label": "Periferica",
-     "descr": "FORLANINI, MECENATE, PONTE LAMBRO",
-     "semestre": "2025-S2",
-     "loc_min": 12.0,
-     "loc_max": 14.9,
-     "loc_mid": 13.45,
-     "sup": "L",
-     "tipologia": "Abitazioni civili",
-     "stato": "NORMALE",
-     "ott_min": 15.0,
-     "ott_max": 19.0
-    },
-    {
-     "zona": "D38",
-     "linkzona": "MI00011748",
-     "fascia": "D",
-     "fascia_label": "Periferica",
-     "descr": "SANTA GIULIA, ROGOREDO",
-     "semestre": "2025-S2",
-     "loc_min": 11.0,
-     "loc_max": 14.0,
-     "loc_mid": 12.5,
-     "sup": "L",
-     "tipologia": "Abitazioni civili",
-     "stato": "NORMALE",
-     "ott_min": 14.1,
-     "ott_max": 18.5
-    },
-    {
-     "zona": "D39",
-     "linkzona": "MI00011750",
-     "fascia": "D",
-     "fascia_label": "Periferica",
-     "descr": "CASCINA MERLATA, EXPO",
-     "semestre": "2025-S2",
-     "loc_min": 14.0,
-     "loc_max": 21.0,
-     "loc_mid": 17.5,
-     "sup": "L",
-     "tipologia": "Abitazioni civili",
-     "stato": "OTTIMO",
-     "ott_min": 14.0,
-     "ott_max": 21.0
-    },
-    {
-     "zona": "D40",
-     "linkzona": "MI00011751",
-     "fascia": "D",
-     "fascia_label": "Periferica",
-     "descr": "MUSOCCO, CERTOSA",
-     "semestre": "2025-S2",
-     "loc_min": 10.0,
-     "loc_max": 14.5,
-     "loc_mid": 12.25,
-     "sup": "L",
-     "tipologia": "Abitazioni civili",
-     "stato": "NORMALE",
-     "ott_min": 14.6,
-     "ott_max": 21.5
-    }
-   ],
-   "redefined": [
-    "D30",
-    "D15"
-   ]
+   "boundaries": "2024-S2",
+   "zones": 43,
+   "unmapped": [],
+   "redefined": []
   },
   {
    "name": "Roma",
@@ -100,6 +33,7 @@
     12.8555,
     42.14092
    ],
+   "boundaries": "2018-S2",
    "zones": 234,
    "unmapped": [
     {
@@ -112,6 +46,8 @@
      "loc_min": 9.8,
      "loc_max": 13.3,
      "loc_mid": 11.55,
+     "sale_min": 1950.0,
+     "sale_max": 2600.0,
      "sup": "L",
      "tipologia": "Abitazioni civili",
      "stato": "NORMALE"
@@ -126,6 +62,8 @@
      "loc_min": 9.0,
      "loc_max": 12.0,
      "loc_mid": 10.5,
+     "sale_min": 1850.0,
+     "sale_max": 2400.0,
      "sup": "L",
      "tipologia": "Abitazioni civili",
      "stato": "NORMALE"
@@ -140,6 +78,8 @@
      "loc_min": 11.3,
      "loc_max": 15.0,
      "loc_mid": 13.15,
+     "sale_min": 2800.0,
+     "sale_max": 3800.0,
      "sup": "L",
      "tipologia": "Abitazioni civili",
      "stato": "NORMALE"
@@ -153,6 +93,37 @@
    ]
   },
   {
+   "name": "Bari",
+   "istat": "072006",
+   "bbox": [
+    16.71724,
+    41.01602,
+    17.03635,
+    41.16958
+   ],
+   "boundaries": "2018-S2",
+   "zones": 35,
+   "unmapped": [
+    {
+     "zona": "R12",
+     "linkzona": "BA00012445",
+     "fascia": "R",
+     "fascia_label": "Extraurbana",
+     "descr": "ZONA AGRICOLA TRA RIONE JAPIGIA E TRIGGIANO - TRA LA VIA AMENDOLA E TR...",
+     "semestre": "2025-S2",
+     "loc_min": null,
+     "loc_max": null,
+     "loc_mid": null,
+     "nonres": true
+    }
+   ],
+   "redefined": [
+    "R1",
+    "R3",
+    "R6"
+   ]
+  },
+  {
    "name": "Bologna",
    "istat": "037006",
    "bbox": [
@@ -161,7 +132,263 @@
     11.43368,
     44.55621
    ],
+   "boundaries": "2018-S2",
    "zones": 34,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Cagliari",
+   "istat": "092009",
+   "bbox": [
+    9.00555,
+    39.15745,
+    9.18191,
+    39.28243
+   ],
+   "boundaries": "2018-S2",
+   "zones": 22,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Catania",
+   "istat": "087015",
+   "bbox": [
+    14.93591,
+    37.35831,
+    15.12582,
+    37.56236
+   ],
+   "boundaries": "2018-S2",
+   "zones": 28,
+   "unmapped": [
+    {
+     "zona": "C9",
+     "linkzona": "CT00009414",
+     "fascia": "C",
+     "fascia_label": "Semicentrale",
+     "descr": "ACQUEDOTTO GRECO, CASTROMARINO, FORLANINI, P.ZZA PALESTRO, FORTINO VEC...",
+     "semestre": "2025-S2",
+     "loc_min": 3.5,
+     "loc_max": 5.1,
+     "loc_mid": 4.3,
+     "sale_min": 1000.0,
+     "sale_max": 1450.0,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    }
+   ],
+   "redefined": [
+    "C6",
+    "C8"
+   ]
+  },
+  {
+   "name": "Genova",
+   "istat": "010025",
+   "bbox": [
+    8.66577,
+    44.37916,
+    9.09566,
+    44.51989
+   ],
+   "boundaries": "2018-S2",
+   "zones": 81,
+   "unmapped": [
+    {
+     "zona": "B7",
+     "linkzona": "GE00011086",
+     "fascia": "B",
+     "fascia_label": "Centrale",
+     "descr": "PRE' - MADDALENA TS.B (V. DEL CAMPO - V.PRE' - V. GRAMSCI - P.ZZA DELLA NU...",
+     "semestre": "2025-S2",
+     "loc_min": 8.1,
+     "loc_max": 12.1,
+     "loc_mid": 10.1,
+     "sale_min": 1750.0,
+     "sale_max": 2600.0,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    },
+    {
+     "zona": "B8",
+     "linkzona": "GE00011087",
+     "fascia": "B",
+     "fascia_label": "Centrale",
+     "descr": "GARIBALDI TS.A (V. BALBI - V. CAIROLI - P.ZZA FONTANE MAROSE - V. LUCCOLI)",
+     "semestre": "2025-S2",
+     "loc_min": 8.2,
+     "loc_max": 12.2,
+     "loc_mid": 10.2,
+     "sale_min": 2100.0,
+     "sale_max": 3100.0,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    }
+   ],
+   "redefined": [
+    "B04",
+    "B03"
+   ]
+  },
+  {
+   "name": "Padova",
+   "istat": "028060",
+   "bbox": [
+    11.80538,
+    45.33962,
+    11.97645,
+    45.45735
+   ],
+   "boundaries": "2018-S2",
+   "zones": 22,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Palermo",
+   "istat": "082053",
+   "bbox": [
+    13.24191,
+    38.05003,
+    13.45135,
+    38.22455
+   ],
+   "boundaries": "2018-S2",
+   "zones": 51,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Pescara",
+   "istat": "068028",
+   "bbox": [
+    14.15289,
+    42.41524,
+    14.25406,
+    42.49413
+   ],
+   "boundaries": "2018-S2",
+   "zones": 18,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Pisa",
+   "istat": "050026",
+   "bbox": [
+    10.26912,
+    43.58136,
+    10.45628,
+    43.75119
+   ],
+   "boundaries": "2018-S2",
+   "zones": 15,
+   "unmapped": [
+    {
+     "zona": "E5",
+     "linkzona": "PI00009881",
+     "fascia": "E",
+     "fascia_label": "Suburbana",
+     "descr": "ZONA COMPRESA FRA CANALE NAVICELLI E FERROVIA",
+     "semestre": "2025-S2",
+     "loc_min": 5.4,
+     "loc_max": 8.0,
+     "loc_mid": 6.7,
+     "sale_min": 1300.0,
+     "sale_max": 2050.0,
+     "sup": "L",
+     "tipologia": "Abitazioni civili",
+     "stato": "NORMALE"
+    }
+   ],
+   "redefined": []
+  },
+  {
+   "name": "Rimini",
+   "istat": "099014",
+   "bbox": [
+    12.43813,
+    43.96932,
+    12.6326,
+    44.11562
+   ],
+   "boundaries": "2018-S2",
+   "zones": 23,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Trento",
+   "istat": "022205",
+   "bbox": [
+    11.02146,
+    45.97573,
+    11.19389,
+    46.15215
+   ],
+   "boundaries": "2018-S2",
+   "zones": 38,
+   "unmapped": [
+    {
+     "zona": "D10",
+     "linkzona": "TN00002710",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "ZONA PRODUTTIVA RAVINA",
+     "semestre": "2025-S2",
+     "loc_min": null,
+     "loc_max": null,
+     "loc_mid": null,
+     "nonres": true
+    },
+    {
+     "zona": "D11",
+     "linkzona": "TN00002709",
+     "fascia": "D",
+     "fascia_label": "Periferica",
+     "descr": "ZONA PRODUTTIVA CAMPOTRENTINO",
+     "semestre": "2025-S2",
+     "loc_min": null,
+     "loc_max": null,
+     "loc_mid": null,
+     "nonres": true
+    }
+   ],
+   "redefined": [
+    "D3",
+    "D2"
+   ]
+  },
+  {
+   "name": "Trieste",
+   "istat": "032006",
+   "bbox": [
+    13.66847,
+    45.60688,
+    13.89874,
+    45.74674
+   ],
+   "boundaries": "2018-S2",
+   "zones": 11,
+   "unmapped": [],
+   "redefined": []
+  },
+  {
+   "name": "Venezia",
+   "istat": "027042",
+   "bbox": [
+    12.16682,
+    45.23377,
+    12.59627,
+    45.57809
+   ],
+   "boundaries": "2018-S2",
+   "zones": 36,
    "unmapped": [],
    "redefined": []
   }

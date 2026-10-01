@@ -5,3 +5,5 @@ raw/fetch.log
 raw/sample_result.html
 __pycache__/
 node_modules/
+raw/fetch*.log
+raw/kmz/*.kmz
