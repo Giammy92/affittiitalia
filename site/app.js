@@ -14,9 +14,13 @@ const eur = (n, d = 0) => n.toLocaleString('it-IT', { minimumFractionDigits: d, 
 const eurM2 = (n) => eur(n, n % 1 ? 2 : 0);
 const round10 = (n) => Math.round(n / 10) * 10;
 const slug = (s) => s.toLowerCase().normalize('NFD').replace(/[^\w]/g, '');
+// Italian title case: prepositions/articles stay lowercase unless first
+const SMALL = new Set(['di', 'del', 'della', 'dello', 'dei', 'degli', 'delle', 'da', 'dal', 'dalla', 'al', 'alla',
+  'alle', 'ai', 'agli', 'a', 'e', 'ed', 'in', 'su', 'sul', 'sulla', 'per', 'con']);
 const titleCase = (s) => s.toLowerCase()
-  .replace(/(^|[\s,.'`(\-/])(\p{L})/gu, (m, p, c) => p + c.toUpperCase())
-  .replace(/`/g, "'");
+  .replace(/(^|[\s,.'`(\-/:])(\p{L})/gu, (m, p, c) => p + c.toUpperCase())
+  .replace(/`/g, "'")
+  .replace(/(\s)(\p{L}+)(?![\p{L}])/gu, (m, sp, w) => sp + (SMALL.has(w.toLowerCase()) ? w.toLowerCase() : w));
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function track(name) {

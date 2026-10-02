@@ -16,7 +16,10 @@ scripts/cities.py        launch cities (OMI province + cadastral code, boundary 
 scripts/check_cities.py  which comuni still match their 2018 zone boundaries
 scripts/fetch_values.py  OMI values per zone for a semester (public consultation service, cached)
 scripts/build_data.py    joins values to zone boundaries → site/data/*.geojson + index.json
+scripts/build_pages.py   static, indexable page per city (site/<city>/) + sitemap.xml
 scripts/make_og.py       social preview image site/og.png
+scripts/refresh.py       detects a new OMI semester and runs the whole rebuild
+tests/                   pipeline tests (python -m unittest discover -s tests)
 raw/kmz/*.kml            OMI zone boundaries, 2nd semester 2018 (via onData)
 raw/geo/*.geojson        newer open-data boundaries (Milano 2024-S2, Comune di Milano, CC BY 4.0)
 raw/values_<sem>.json    fetched values
@@ -26,10 +29,15 @@ site/                    the website (index.html, app.js, style.css, privacy.htm
 
 ## Refresh data (every semester)
 
+Automatic: `.github/workflows/refresh-data.yml` runs monthly, and when the Agenzia publishes
+a new semester it fetches it, rebuilds, commits and redeploys. Run it by hand from the
+Actions tab ("Refresh OMI data"). Manual equivalent:
+
 ```bash
 python scripts/fetch_values.py 20261          # new semester code: YYYYS
 python scripts/fetch_values.py 20241          # same semester two years earlier (trend)
 python scripts/build_data.py 20261 20241
+python scripts/build_pages.py
 python scripts/make_og.py
 ```
 

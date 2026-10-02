@@ -18,6 +18,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pipeline tests
+        run: |
+          pip install requests
+          python -m unittest discover -s tests
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

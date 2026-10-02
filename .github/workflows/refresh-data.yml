@@ -1,0 +1,53 @@
+name: Refresh OMI data
+# Monthly check for a new OMI semester (published twice a year); rebuilds and redeploys when found.
+on:
+  schedule:
+    - cron: "17 6 3 * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Rebuild even if no new semester"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install requests matplotlib
+      - name: Check for new semester and rebuild
+        id: refresh
+        shell: bash  # explicit bash = -eo pipefail, so a failing refresh.py isn't hidden by tee
+        run: |
+          python scripts/refresh.py ${{ inputs.force && '--force' || '' }} | tee refresh.log
+          if grep -q '^NEW_SEMESTER=' refresh.log; then
+            echo "semester=$(grep '^NEW_SEMESTER=' refresh.log | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Tests
+        if: steps.refresh.outputs.semester != ''
+        run: python -m unittest discover -s tests
+      - name: Commit and redeploy
+        if: steps.refresh.outputs.semester != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site raw/values_*.json
+          git commit -m "Data: OMI semester ${{ steps.refresh.outputs.semester }}" || exit 0
+          git push
+          # Pushes made with GITHUB_TOKEN don't trigger other workflows; start the deploy explicitly
+          gh workflow run pages.yml --ref main
