@@ -25,12 +25,18 @@ session = requests.Session()
 session.headers.update({"User-Agent": "Mozilla/5.0 (compatible; AffittiItalia/0.1; non-commercial)"})
 
 
-def post(path, data):
-    time.sleep(DELAY)
-    r = session.post(BASE + path, data=data, headers={"Referer": BASE + "ricerca.php"}, timeout=60)
-    r.raise_for_status()
-    r.encoding = "latin1"
-    return r.text
+def post(path, data, retries=4):
+    for attempt in range(retries + 1):
+        time.sleep(DELAY * (1 + 4 * attempt))  # back off harder after each failure
+        try:
+            r = session.post(BASE + path, data=data, headers={"Referer": BASE + "ricerca.php"}, timeout=60)
+            r.raise_for_status()
+            r.encoding = "latin1"
+            return r.text
+        except requests.RequestException as e:
+            if attempt == retries:
+                raise
+            print(f"  retry {attempt + 1} after {type(e).__name__}", flush=True)
 
 
 def hidden_fields(html):
