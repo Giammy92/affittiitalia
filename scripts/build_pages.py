@@ -163,6 +163,7 @@ def page(city, cities, index):
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2314213d'/><path d='M8 17 16 9l8 8v7h-5v-5h-6v5H8z' fill='%23fc8d59'/></svg>">
 <style>{CSS}</style>
+<script data-goatcounter="https://tataindustries.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>
 <body>

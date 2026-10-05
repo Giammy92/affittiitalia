@@ -1,7 +1,7 @@
 'use strict';
 
 // Optional cookie-free analytics: set to your GoatCounter code (e.g. "affittiitalia") to enable.
-const GOATCOUNTER = '';
+const GOATCOUNTER = 'tataindustries';
 const COLORS = ['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'];
 const ND_COLOR = '#cbd5e0';
 const GEOCODE_URL = 'https://nominatim.openstreetmap.org/search';
