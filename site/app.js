@@ -116,6 +116,65 @@ function featureContains(f, lng, lat) {
     : g.coordinates.some((p) => polyContains(p, lng, lat));
 }
 
+// ---------- Listing links (Immobiliare/Idealista accept a drawn area; Subito only a city) ----------
+function outerRing(f) {
+  const g = f.geometry;
+  const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+  const area = (r) => Math.abs(r.reduce((a, [x1, y1], i) => { const [x2, y2] = r[(i + 1) % r.length]; return a + x1 * y2 - x2 * y1; }, 0));
+  return polys.map((p) => p[0]).sort((a, b) => area(b) - area(a))[0];
+}
+function simplifyRing(ring, maxPts = 25) {
+  // Douglas-Peucker with growing tolerance until the ring is short enough for a URL
+  const dp = (pts, tol) => {
+    if (pts.length < 3) return pts;
+    const [ax, ay] = pts[0], [bx, by] = pts[pts.length - 1];
+    let best = -1, idx = 0;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [px, py] = pts[i];
+      const d = Math.abs((by - ay) * px - (bx - ax) * py + bx * ay - by * ax) / (Math.hypot(by - ay, bx - ax) || 1e-12);
+      if (d > best) { best = d; idx = i; }
+    }
+    if (best <= tol) return [pts[0], pts[pts.length - 1]];
+    return dp(pts.slice(0, idx + 1), tol).slice(0, -1).concat(dp(pts.slice(idx), tol));
+  };
+  // A closed ring starts and ends on the same point, which gives DP a zero-length baseline:
+  // split it at the vertex farthest from the start and simplify the two halves.
+  const [sx, sy] = ring[0];
+  let k = 1;
+  ring.forEach(([x, y], i) => { if (Math.hypot(x - sx, y - sy) > Math.hypot(ring[k][0] - sx, ring[k][1] - sy)) k = i; });
+  const simp = (tol) => dp(ring.slice(0, k + 1), tol).slice(0, -1).concat(dp(ring.slice(k), tol));
+  let tol = 0.00005, out = ring;
+  while (out.length > maxPts && tol < 0.05) { out = simp(tol); tol *= 1.6; }
+  return out;
+}
+function encodePolyline(latlngs) {
+  let out = '', pLat = 0, pLng = 0;
+  const enc = (v) => {
+    v = v < 0 ? ~(v << 1) : v << 1;
+    let s = '';
+    while (v >= 0x20) { s += String.fromCharCode((0x20 | (v & 0x1f)) + 63); v >>= 5; }
+    return s + String.fromCharCode(v + 63);
+  };
+  for (const [lat, lng] of latlngs) {
+    const a = Math.round(lat * 1e5), b = Math.round(lng * 1e5);
+    out += enc(a - pLat) + enc(b - pLng);
+    pLat = a; pLng = b;
+  }
+  return out;
+}
+function listingsHtml(f) {
+  const ring = simplifyRing(outerRing(f)).map(([lng, lat]) => [lat, lng]);
+  const open = ring.slice(0, -1);
+  const closed = open.concat([open[0]]);
+  const vrt = open.map(([lat, lng]) => `${lat.toFixed(4)},${lng.toFixed(4)}`).join(';');
+  const immo = `https://www.immobiliare.it/search-list/?idContratto=2&idCategoria=1&vrt=${encodeURIComponent(vrt)}`;
+  const idea = `https://www.idealista.it/aree/affitto-case/?shape=${encodeURIComponent(`((${encodePolyline(closed)}))`)}`;
+  const sub = state.city.subito && `https://www.subito.it/annunci-${state.city.subito.split('/')[0]}/affitto/appartamenti/${state.city.subito.split('/').slice(1).join('/')}/`;
+  const a = (href, label, key, note = '') => `<a class="lk" href="${href}" target="_blank" rel="noopener nofollow" data-out="${key}">${label}${note ? `<small>${note}</small>` : ''}</a>`;
+  return `<div class="listings"><div class="lbl">Annunci in affitto in questa zona</div>
+    <div class="lks">${a(immo, 'Immobiliare.it', 'immobiliare')}${a(idea, 'Idealista', 'idealista')}${sub ? a(sub, 'Subito.it', 'subito', `tutta ${escapeHtml(state.city.name)}`) : ''}</div></div>`;
+}
+
 // ---------- Panel ----------
 // On phones the panel is a bottom sheet: keep the focused zone/point above it.
 function sheetPad() {
@@ -164,7 +223,7 @@ function zoneHtml(p) {
       : p.sale_min
         ? `Per questa zona l'OMI pubblica solo i prezzi di vendita: ${eur(p.sale_min)}–${eur(p.sale_max)} €/m² (abitazioni civili, stato normale). Nessun valore di locazione.`
         : 'Dati di locazione non disponibili per questa zona.';
-    return `${head}${title}<p class="warn">${why}</p>${meta(p)}`;
+    return `${head}${title}<p class="warn">${why}</p>${p.nonres ? '' : listingsHtml(state.selected)}${meta(p)}`;
   }
   const lorda = p.sup !== 'N';
   return `${head}${title}
@@ -176,6 +235,7 @@ function zoneHtml(p) {
       <div class="val" id="pest"></div>
     </div>
     <p class="warn">Valori di riferimento OMI, non annunci: nelle zone più richieste i canoni di mercato attuali possono essere superiori del 15–30%.</p>
+    ${listingsHtml(state.selected)}
     <button class="share" id="shareBtn">Copia link a questa zona</button>
     ${meta(p)}`;
 }
@@ -345,6 +405,10 @@ function toast(msg) {
 }
 
 $('#closePanel').onclick = closePanel;
+$('#panelBody').addEventListener('click', (e) => {
+  const l = e.target.closest('a[data-out]');
+  if (l) track(`out_${l.dataset.out}`);
+});
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#panel').hidden) closePanel(); });
 $('#infoBtn').onclick = () => $('#info').showModal();
 $('#listBtn').onclick = openList;

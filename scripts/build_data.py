@@ -191,6 +191,7 @@ def main():
         b = bbox(fc)
         index["cities"].append({
             "name": c["name"], "istat": c["istat"], "bbox": [round(x, 5) for x in b], "boundaries": boundaries,
+            "subito": c.get("subito"),
             "zones": len(fc["features"]), "unmapped": unmapped, "redefined": redefined,
         })
         size = (OUT / f"{c['istat']}.geojson").stat().st_size

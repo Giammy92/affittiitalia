@@ -20,6 +20,7 @@
     45.53594
    ],
    "boundaries": "2024-S2",
+   "subito": "lombardia/milano/milano",
    "zones": 43,
    "unmapped": [],
    "redefined": []
@@ -34,6 +35,7 @@
     42.14092
    ],
    "boundaries": "2018-S2",
+   "subito": "lazio/roma/roma",
    "zones": 234,
    "unmapped": [
     {
@@ -102,6 +104,7 @@
     41.16958
    ],
    "boundaries": "2018-S2",
+   "subito": "puglia/bari/bari",
    "zones": 35,
    "unmapped": [
     {
@@ -133,6 +136,7 @@
     44.55621
    ],
    "boundaries": "2018-S2",
+   "subito": "emilia-romagna/bologna/bologna",
    "zones": 34,
    "unmapped": [],
    "redefined": []
@@ -147,6 +151,7 @@
     39.28243
    ],
    "boundaries": "2018-S2",
+   "subito": "sardegna/cagliari/cagliari",
    "zones": 22,
    "unmapped": [],
    "redefined": []
@@ -161,6 +166,7 @@
     37.56236
    ],
    "boundaries": "2018-S2",
+   "subito": "sicilia/catania/catania",
    "zones": 28,
    "unmapped": [
     {
@@ -195,6 +201,7 @@
     44.51989
    ],
    "boundaries": "2018-S2",
+   "subito": "liguria/genova/genova",
    "zones": 81,
    "unmapped": [
     {
@@ -245,6 +252,7 @@
     45.45735
    ],
    "boundaries": "2018-S2",
+   "subito": "veneto/padova/padova",
    "zones": 22,
    "unmapped": [],
    "redefined": []
@@ -259,6 +267,7 @@
     38.22455
    ],
    "boundaries": "2018-S2",
+   "subito": "sicilia/palermo/palermo",
    "zones": 51,
    "unmapped": [],
    "redefined": []
@@ -273,6 +282,7 @@
     42.49413
    ],
    "boundaries": "2018-S2",
+   "subito": "abruzzo/pescara/pescara",
    "zones": 18,
    "unmapped": [],
    "redefined": []
@@ -287,6 +297,7 @@
     43.75119
    ],
    "boundaries": "2018-S2",
+   "subito": "toscana/pisa/pisa",
    "zones": 15,
    "unmapped": [
     {
@@ -318,6 +329,7 @@
     44.11562
    ],
    "boundaries": "2018-S2",
+   "subito": "emilia-romagna/rimini/rimini",
    "zones": 23,
    "unmapped": [],
    "redefined": []
@@ -332,6 +344,7 @@
     46.15215
    ],
    "boundaries": "2018-S2",
+   "subito": "trentino-alto-adige/trento/trento",
    "zones": 38,
    "unmapped": [
     {
@@ -374,6 +387,7 @@
     45.74674
    ],
    "boundaries": "2018-S2",
+   "subito": "friuli-venezia-giulia/trieste/trieste",
    "zones": 11,
    "unmapped": [],
    "redefined": []
@@ -388,6 +402,7 @@
     45.57809
    ],
    "boundaries": "2018-S2",
+   "subito": "veneto/venezia/venezia",
    "zones": 36,
    "unmapped": [],
    "redefined": []
