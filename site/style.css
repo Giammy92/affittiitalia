@@ -94,6 +94,16 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .estimate .lbl { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .estimate input { width: 64px; font: inherit; font-size: 14px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 8px; }
 .estimate .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
+.community { margin-top: 12px; padding: 12px; border-radius: 12px; background: #f0f7ff; border: 1px solid #cfe3fb; }
+.community .lbl { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.community .cval { font-size: 20px; font-weight: 700; margin-top: 2px; }
+.community .cval small { font-size: 12px; font-weight: 500; color: var(--muted); }
+.report { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.report label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
+.report input, .report select { font: inherit; font-size: 14px; padding: 7px 8px; border: 1px solid var(--line); border-radius: 8px; background: #f7fafc; min-width: 0; }
+.report .primary, .report .hint { grid-column: 1 / -1; }
+.report .hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
+.thanks { margin-top: 12px; font-size: 14px; color: #22543d; background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 10px; padding: 10px 12px; }
 .listings { margin-top: 14px; }
 .listings .lbl { font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
 .lks { display: flex; flex-wrap: wrap; gap: 6px; }

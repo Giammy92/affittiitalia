@@ -2,6 +2,12 @@
 
 // Optional cookie-free analytics: set to your GoatCounter code (e.g. "affittiitalia") to enable.
 const GOATCOUNTER = 'tataindustries';
+// Anonymous rent reports: Google Form that collects them (see README "Segnalazioni").
+// Empty action = feature off. Entry ids come from the form's pre-filled link.
+const REPORT_FORM = {
+  action: '',
+  entries: { citta: '', zona: '', affitto: '', mq: '', locali: '', arredato: '' },
+};
 const COLORS = ['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'];
 const ND_COLOR = '#cbd5e0';
 const GEOCODE_URL = 'https://nominatim.openstreetmap.org/search';
@@ -235,9 +241,63 @@ function zoneHtml(p) {
       <div class="val" id="pest"></div>
     </div>
     <p class="warn">Valori di riferimento OMI, non annunci: nelle zone più richieste i canoni di mercato attuali possono essere superiori del 15–30%.</p>
+    ${communityHtml(p)}
     ${listingsHtml(state.selected)}
     <button class="share" id="shareBtn">Copia link a questa zona</button>
     ${meta(p)}`;
+}
+
+// ---------- Anonymous rent reports ----------
+const reportKey = (p) => `ai_rep_${state.city.istat}_${p.zona}`;
+function alreadyReported(p) { try { return !!localStorage.getItem(reportKey(p)); } catch { return false; } }
+
+function communityHtml(p) {
+  const r = state.reports && state.reports[state.city.istat] && state.reports[state.city.istat][p.zona];
+  let html = '';
+  if (r) {
+    const vs = r.eur_m2 > p.loc_max ? ' · sopra il massimo OMI' : r.eur_m2 < p.loc_min ? ' · sotto il minimo OMI' : ' · dentro la forchetta OMI';
+    html += `<div class="community"><div class="lbl">Cosa pagano gli utenti qui</div>
+      <div class="cval">${eurM2(r.eur_m2)} €/m² <small>mediana${vs}</small></div>
+      <div class="sub">Affitto mediano ${eur(r.rent)} €/mese per ${r.sqm} m² · ${r.n} segnalazioni anonime negli ultimi 12 mesi</div></div>`;
+  }
+  if (REPORT_FORM.action) {
+    html += alreadyReported(p)
+      ? '<p class="meta">Grazie, hai già segnalato il tuo affitto per questa zona.</p>'
+      : `<button class="share" id="reportBtn">Quanto paghi tu? Segnala in modo anonimo</button><div id="reportBox"></div>`;
+  }
+  return html;
+}
+
+function reportFormHtml() {
+  return `<form id="reportForm" class="report" autocomplete="off">
+    <label>Affitto mensile <span class="hint">€, spese escluse</span><input name="affitto" type="number" inputmode="numeric" min="100" max="20000" required></label>
+    <label>Superficie <span class="hint">m²</span><input name="mq" type="number" inputmode="numeric" min="10" max="500" value="${sqm()}" required></label>
+    <label>Locali<select name="locali"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5+</option></select></label>
+    <label>Arredato<select name="arredato"><option>Sì</option><option>No</option></select></label>
+    <input name="website" class="hp" tabindex="-1" aria-hidden="true">
+    <button class="primary" type="submit">Invia in forma anonima</button>
+    <p class="hint">Nessun dato personale: solo zona, affitto, m², locali e arredamento. Le medie compaiono quando una zona ha almeno 3 segnalazioni.</p>
+  </form>`;
+}
+
+async function submitReport(p, form) {
+  const d = new FormData(form);
+  if (d.get('website')) return true; // honeypot: silently drop bots
+  const rent = parseFloat(d.get('affitto')), mq = parseFloat(d.get('mq'));
+  if (!(rent >= 100 && rent <= 20000 && mq >= 10 && mq <= 500 && rent / mq >= 3 && rent / mq <= 80)) {
+    toast('Controlla affitto e superficie: i valori sembrano fuori scala');
+    return false;
+  }
+  const e = REPORT_FORM.entries;
+  const body = new URLSearchParams({
+    [e.citta]: state.city.istat, [e.zona]: p.zona, [e.affitto]: String(Math.round(rent)),
+    [e.mq]: String(Math.round(mq)), [e.locali]: d.get('locali'), [e.arredato]: d.get('arredato'),
+  });
+  // Google Forms accepts cross-origin posts but returns an opaque response (no-cors)
+  await fetch(REPORT_FORM.action, { method: 'POST', mode: 'no-cors', body });
+  try { localStorage.setItem(reportKey(p), '1'); } catch { /* per-browser dedupe is best effort */ }
+  track('report_submit');
+  return true;
 }
 
 function trendHtml(p) {
@@ -270,6 +330,25 @@ function selectFeature(f, { zoom = false, source = 'click' } = {}) {
   if (more) more.onclick = () => { $('#dz').textContent = titleCase(p.descr); more.remove(); };
   const ps = $('#psqm');
   if (ps) ps.oninput = () => { $('#sqm').value = ps.value; updateEstimate(p); restyle(); };
+  const rb = $('#reportBtn');
+  if (rb) rb.onclick = () => {
+    rb.remove();
+    $('#reportBox').innerHTML = reportFormHtml();
+    $('#reportForm').onsubmit = async (ev) => {
+      ev.preventDefault();
+      const btn = ev.target.querySelector('button[type=submit]');
+      btn.disabled = true;
+      try {
+        if (await submitReport(p, ev.target)) {
+          $('#reportBox').innerHTML = '<p class="thanks">Grazie! La segnalazione è anonima e verrà conteggiata al prossimo aggiornamento (entro qualche ora).</p>';
+        } else { btn.disabled = false; }
+      } catch {
+        btn.disabled = false;
+        toast('Invio non riuscito, riprova più tardi');
+      }
+    };
+    track('report_open');
+  };
   const sb = $('#shareBtn');
   if (sb) sb.onclick = async () => {
     try { await navigator.clipboard.writeText(location.href); toast('Link copiato'); } catch { toast(location.href); }
@@ -445,6 +524,7 @@ async function init() {
     document.head.appendChild(s);
   }
   state.index = await fetch('data/index.json').then((r) => r.json());
+  try { state.reports = (await fetch('data/reports.json').then((r) => r.json())).zones; } catch { state.reports = {}; }
   $('#city').innerHTML = state.index.cities.map((c) => `<option value="${c.istat}">${escapeHtml(c.name)}</option>`).join('');
   renderLegend();
   const { city, zone } = routeFromHash();
